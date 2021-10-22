@@ -69,6 +69,11 @@ class AppComponent {
     constructor(afMessaging) {
         this.afMessaging = afMessaging;
     }
+    ngOnInit() {
+        console.log('ok, we init, go listen messages');
+        this.afMessaging.messages
+            .subscribe((message) => { console.log(message); });
+    }
     requestPermission() {
         this.afMessaging.requestPermission
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_0__["mergeMapTo"])(this.afMessaging.tokenChanges))
@@ -78,9 +83,41 @@ class AppComponent {
         this.afMessaging.messages
             .subscribe((message) => { console.log(message); });
     }
+    send() {
+        this.afMessaging.getToken.subscribe(token => {
+            const key = 'BKMXf-RGn51MY2SKQcBMiq7ho9G9G_tfeoEKZp3sXRJkohmj2u-mmPcYHzktzpltUPe2s8xttBnaRvu_YR19sv8';
+            fetch('https://fcm.googleapis.com/fcm/send', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'key=' + key,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    // Firebase loses 'image' from the notification.
+                    // And you must see this: https://github.com/firebase/quickstart-js/issues/71
+                    data: {
+                        "notification": {
+                            "title": "Ералаш",
+                            "body": "Начало в 21:00",
+                            "icon": "https://eralash.ru.rsz.io/sites/all/themes/eralash_v5/logo.png?width=40&height=40",
+                            "click_action": "http://eralash.ru/"
+                        },
+                        "to": "eLwXgxei_OluWWt2x8hAi4:APA91bFkXscsn6p0JI5fieOVDPYlV-8_sioZDLrMuZNHCPLgXnKD79uhNFKuBnYIG7Kepli6qF1BWeCAY4gGey784kfRh-y9_AZPiQABKi-sI9Ru90i3Jwf_ykV-aLy7X9lU5BzkRHRc"
+                    },
+                    to: token
+                })
+            }).then(function (response) {
+                return response.json();
+            }).then(function (json) {
+                console.log('Response', json);
+            }).catch(function (error) {
+                console.log('error send notify', error);
+            });
+        });
+    }
 }
 AppComponent.ɵfac = function AppComponent_Factory(t) { return new (t || AppComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_fire_messaging__WEBPACK_IMPORTED_MODULE_2__["AngularFireMessaging"])); };
-AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: AppComponent, selectors: [["app-root"]], decls: 5, vars: 0, consts: [[3, "click"]], template: function AppComponent_Template(rf, ctx) { if (rf & 1) {
+AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: AppComponent, selectors: [["app-root"]], decls: 11, vars: 0, consts: [[3, "click"]], template: function AppComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "button", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_Template_button_click_0_listener() { return ctx.requestPermission(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1, " Hello this is a chat app. You should let us send you notifications for this reason. ");
@@ -90,6 +127,14 @@ AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineCompo
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_Template_button_click_3_listener() { return ctx.listen(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](4, " Get notified! ");
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](5, "br");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](6, "br");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](7, "button", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_Template_button_click_7_listener() { return ctx.send(); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](8, " Go nutify! ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](9, "br");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](10, "br");
     } }, encapsulation: 2 });
 
 
