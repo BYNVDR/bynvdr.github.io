@@ -85,6 +85,7 @@ class AppComponent {
     }
     send() {
         this.afMessaging.getToken.subscribe(token => {
+            console.log('token on getToken subscribe', token);
             const key = 'BKMXf-RGn51MY2SKQcBMiq7ho9G9G_tfeoEKZp3sXRJkohmj2u-mmPcYHzktzpltUPe2s8xttBnaRvu_YR19sv8';
             fetch('https://fcm.googleapis.com/fcm/send', {
                 method: 'POST',
