@@ -74,12 +74,21 @@ class AppComponent {
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_0__["mergeMapTo"])(this.afMessaging.tokenChanges))
             .subscribe((token) => { console.log('Permission granted! Save to the server!', token); }, (error) => { console.error(error); });
     }
+    listen() {
+        this.afMessaging.messages
+            .subscribe((message) => { console.log(message); });
+    }
 }
 AppComponent.ɵfac = function AppComponent_Factory(t) { return new (t || AppComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_fire_messaging__WEBPACK_IMPORTED_MODULE_2__["AngularFireMessaging"])); };
-AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: AppComponent, selectors: [["app-root"]], decls: 2, vars: 0, consts: [[3, "click"]], template: function AppComponent_Template(rf, ctx) { if (rf & 1) {
+AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: AppComponent, selectors: [["app-root"]], decls: 5, vars: 0, consts: [[3, "click"]], template: function AppComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "button", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_Template_button_click_0_listener() { return ctx.requestPermission(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1, " Hello this is a chat app. You should let us send you notifications for this reason. ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](2, "br");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](3, "button", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_Template_button_click_3_listener() { return ctx.listen(); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](4, " Get notified! ");
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     } }, encapsulation: 2 });
 
