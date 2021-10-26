@@ -21,25 +21,57 @@ firebase.initializeApp({
 // messages.
 const messaging = firebase.messaging();
 
-self.addEventListener('notificationclick', function(event) {
-    const target = event.notification.click_action || '/';
-    event.notification.close();
 
-    // этот код должен проверять список открытых вкладок и переключатся на открытую
-    // вкладку с ссылкой если такая есть, иначе открывает новую вкладку
-    event.waitUntil(clients.matchAll({
-        type: 'window',
-        includeUncontrolled: true
-    }).then(function(clientList) {
-        // clientList почему-то всегда пуст!?
-        for (var i = 0; i < clientList.length; i++) {
-            var client = clientList[i];
-            if (client.url == target && 'focus' in client) {
-                return client.focus();
-            }
-        }
+console.log('sw messaging init ', messaging);
 
-        // Открываем новое окно
-        return clients.openWindow(target);
-    }));
+messaging.onBackgroundMessage((payload) => {
+  console.log('[firebase-messaging-sw.js] Received background message ', payload);
+  // Customize notification here
+  // const notificationTitle = 'Background Message Title';
+  // const notificationOptions = {
+  //   body: 'Background Message body.',
+  //   icon: '/firebase-logo.png'
+  // };
+
+  self.registration.showNotification(payload.notification.title,
+    payload.notification);
 });
+
+
+
+
+// // Customize notification handler
+// messaging.setBackgroundMessageHandler(function(payload) {
+//     console.log('Handling background message', payload);
+//
+//     // Copy data object to get parameters in the click handler
+//     payload.data.notification = JSON.parse(JSON.stringify(payload.notification));
+//
+//     return self.registration.showNotification(payload.title, payload.notification);
+// });
+//
+//
+//
+// // messaging.onNotificationClick('notificationclick').then(r => console.log(r));
+//
+// self.addEventListener('notificationclick', function(event) {
+//     console.log('notificationclick', event);
+//     const target = event.notification.data.click_action || '/';
+//     event.notification.close();
+//
+//     // This looks to see if the current is already open and focuses if it is
+//     event.waitUntil(clients.matchAll({
+//         type: 'window',
+//         includeUncontrolled: true
+//     }).then(function(clientList) {
+//         // clientList always is empty?!
+//         for (var i = 0; i < clientList.length; i++) {
+//             var client = clientList[i];
+//             if (client.url === target && 'focus' in client) {
+//                 return client.focus();
+//             }
+//         }
+//
+//         return clients.openWindow(target);
+//     }));
+// });
