@@ -108,33 +108,42 @@ class AppComponent {
     }
     ngOnInit() {
         console.log('ok, we init, go listen messages');
+        this.requestPermission();
         const token = localStorage.getItem(this.localStorageName);
         console.log('token is in localStorage', token);
         if (!token) {
             console.log('no token in localstorage');
             this.afMessaging.getToken.subscribe((token) => {
                 this.saveToken(token);
+                localStorage.setItem(this.localStorageName, token);
                 console.log('token saves localy', localStorage.getItem(this.localStorageName));
-            }, (error) => { console.error(error); });
-        }
-        else {
-            this.token = token;
-            console.log('if token in local storage token = ', this.token);
+            }, (error) => {
+                console.log(error);
+                // console.error(error);
+            });
         }
         this.afMessaging.messages
             .subscribe((message) => {
             console.log(message);
             console.log(message['notification']['title']);
             this.pushMessage = message['notification'];
+            new Notification(this.pushMessage.title, this.pushMessage);
         });
     }
     requestPermission() {
-        this.afMessaging.requestPermission
-            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_0__["mergeMapTo"])(this.afMessaging.tokenChanges))
-            .subscribe((token) => {
-            console.log('Permission granted! Save to the server!', token);
-            this.token = token;
-        }, (error) => { console.error(error); });
+        if ('Notification' in window) {
+            if (Notification.permission !== 'denied') {
+                this.afMessaging.requestPermission
+                    .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_0__["mergeMapTo"])(this.afMessaging.tokenChanges))
+                    .subscribe((token) => {
+                    console.log('Permission granted! Save to the server!', token);
+                    this.token = token;
+                }, (error) => {
+                    console.log(error);
+                    console.error(error);
+                });
+            }
+        }
     }
     listen() {
         this.afMessaging.messages
@@ -148,7 +157,7 @@ class AppComponent {
 AppComponent.ɵfac = function AppComponent_Factory(t) { return new (t || AppComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_fire_messaging__WEBPACK_IMPORTED_MODULE_2__["AngularFireMessaging"])); };
 AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: AppComponent, selectors: [["app-root"]], decls: 16, vars: 2, consts: [[3, "click"], [4, "ngIf"], ["style", "border: 1px dashed; padding: 20px", 4, "ngIf"], [2, "border", "1px dashed", "padding", "20px"], [3, "src"]], template: function AppComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "h1");
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1, "v0.1");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1, "v0.2");
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](2, "button", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_Template_button_click_2_listener() { return ctx.requestPermission(); });
