@@ -33,11 +33,36 @@ messaging.onBackgroundMessage((payload) => {
   //   icon: '/firebase-logo.png'
   // };
 
+  payload.notification.data = payload.data;
+
   self.registration.showNotification(payload.notification.title,
     payload.notification);
+
+
 });
 
+self.addEventListener('notificationclick', function(event) {
+  console.log('notificationclick', event);
+  console.log('event.notification', event.notification);
+  const target = event.notification.data.click_action || '/';
+  event.notification.close();
 
+  // This looks to see if the current is already open and focuses if it is
+  event.waitUntil(clients.matchAll({
+    type: 'window',
+    includeUncontrolled: true
+  }).then(function(clientList) {
+    // clientList always is empty?!
+    for (var i = 0; i < clientList.length; i++) {
+      var client = clientList[i];
+      if (client.url === target && 'focus' in client) {
+        return client.focus();
+      }
+    }
+
+    return clients.openWindow(target);
+  }));
+});
 
 
 // // Customize notification handler
@@ -54,24 +79,4 @@ messaging.onBackgroundMessage((payload) => {
 //
 // // messaging.onNotificationClick('notificationclick').then(r => console.log(r));
 //
-// self.addEventListener('notificationclick', function(event) {
-//     console.log('notificationclick', event);
-//     const target = event.notification.data.click_action || '/';
-//     event.notification.close();
-//
-//     // This looks to see if the current is already open and focuses if it is
-//     event.waitUntil(clients.matchAll({
-//         type: 'window',
-//         includeUncontrolled: true
-//     }).then(function(clientList) {
-//         // clientList always is empty?!
-//         for (var i = 0; i < clientList.length; i++) {
-//             var client = clientList[i];
-//             if (client.url === target && 'focus' in client) {
-//                 return client.focus();
-//             }
-//         }
-//
-//         return clients.openWindow(target);
-//     }));
-// });
+
